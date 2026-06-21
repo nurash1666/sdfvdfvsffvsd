@@ -1,0 +1,10 @@
+const products=[
+ {id:1,name:'Народные',title:'Сувенир 1',price:500,popular:8},{id:2,name:'Статуэтки',title:'Сувенир 2',price:300,popular:10},{id:3,name:'Авторские',title:'Сувенир 3',price:1000,popular:6},{id:4,name:'Декоративные',title:'Сувенир 4',price:700,popular:7},{id:5,name:'Оригинальные',title:'Сувенир 5',price:800,popular:5},{id:6,name:'Брелки',title:'Сувенир 6',price:400,popular:9},{id:7,name:'Сувенир 7',title:'Сувенир 7',price:450,popular:4}
+];
+const cartKey='comfy-cart';
+function productCard(p,home=false){return `<article class="product-card"><div class="product-image">Сувенир # ${p.id}</div><h3>${home?p.name:`<a href="cart.html">${p.title}</a>`}</h3><div class="product-meta"><span class="price">${p.price}.тг</span><button class="btn btn-small" data-add="${p.id}">В корзину</button></div></article>`}
+function renderProducts(list=products){const home=document.querySelector('#homeProducts');const cat=document.querySelector('#categoryProducts');if(home)home.innerHTML=products.slice(0,6).map(p=>productCard(p,true)).join('');if(cat)cat.innerHTML=list.filter(p=>[1,7].includes(p.id)).map(p=>productCard(p)).join('')}
+function addToCart(id){const item=products.find(p=>p.id==id);localStorage.setItem(cartKey,JSON.stringify([item||products[0]]));alert('Товар добавлен в корзину')}
+function renderCart(){const box=document.querySelector('#cartItems');if(!box)return;const cart=JSON.parse(localStorage.getItem(cartKey)||'null')||[products[0]];box.innerHTML=cart.map(p=>`<div class="cart-row"><span class="thumb">${p.title}</span><h2>${p.title}</h2><strong class="btn btn-small">${p.price}.тг</strong></div>`).join('');document.querySelector('#cartTotal').textContent=cart.reduce((s,p)=>s+p.price,0)}
+document.addEventListener('click',e=>{if(e.target.matches('[data-add]'))addToCart(e.target.dataset.add);if(e.target.matches('[data-sort]')){const key=e.target.dataset.sort;renderProducts([...products].sort((a,b)=>key==='price'?a.price-b.price:b.popular-a.popular))}});
+renderProducts();renderCart();
